@@ -68,26 +68,36 @@ const teacherNameInput = document.getElementById('teacherNameInput');
 
 addTeacherButton.addEventListener('click', async () => {
     const teacherName = teacherNameInput.value.trim();
-    
+    console.log('Teacher Name:', teacherName); // Check the input value
+
     if (teacherName === '') {
         alert('Please enter a teacher name.');
         return;
     }
 
-    // Send POST request to add the new teacher
-    const response = await fetch(`${API_URL}/api/teachers`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: teacherName })
-    });
+    try {
+        console.log('Sending POST request...');
+        const response = await fetch(`${API_URL}/api/teachers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: teacherName })
+        });
+        console.log('Response:', response);
 
-    if (response.ok) {
-        alert('Teacher added successfully!');
-        teacherNameInput.value = ''; // Clear the input field
-        fetchTeachers(); // Refresh the teacher list
-    } else {
-        alert('Failed to add teacher.');
+        if (response.ok) {
+            const newTeacher = await response.json();
+            console.log('New Teacher:', newTeacher);
+            alert(`Teacher "${newTeacher.name}" added successfully!`);
+            teacherNameInput.value = ''; // Clear the input field
+            fetchTeachers(); // Refresh the teacher list
+        } else {
+            const errorData = await response.json();
+            alert(`Failed to add teacher: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error('Error adding teacher:', error);
+        alert('An error occurred while adding the teacher.');
     }
 });
