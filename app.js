@@ -46,6 +46,38 @@ function showTeacherDetails(teacher) {
         teacherList.parentNode.style.display = 'block';
         fetchTeachers();
     };
+
+    // Fetch historical vote data
+    const votingData = await fetchVoteHistory(teacher._id);
+
+    // Show the chart container
+    document.getElementById("chartContainer").style.display = "block";
+
+    // Initialize or update the candlestick chart
+    let options = {
+        series: [{
+            data: votingData
+        }],
+        chart: {
+            type: 'candlestick',
+            height: 350
+        },
+        title: {
+            text: 'Voting Trends',
+            align: 'left'
+        },
+        xaxis: {
+            type: 'datetime'
+        },
+        yaxis: {
+            tooltip: {
+                enabled: true
+            }
+        }
+    };
+
+    let chart = new ApexCharts(document.querySelector("#candlestickChart"), options);
+    chart.render();
 }
 
 // Update votes
@@ -60,6 +92,17 @@ async function updateVotes(action) {
 
     const updatedTeacher = await response.json();
     voteCount.innerText = updatedTeacher.votes;
+}
+
+// Fetch Vote History
+async function fetchVoteHistory(teacherId) {
+    const response = await fetch(`${API_URL}/api/teachers/${teacherId}/history`);
+    const historyData = await response.json();
+
+    return historyData.map(entry => ({
+        x: new Date(entry.date),
+        y: [entry.open, entry.high, entry.low, entry.close]
+    }));
 }
 
 // Initialize app
