@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Voting App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Voting App</h1>
+        <div id="teacherList">
+            <h2>Select a Teacher</h2>
+            <ul id="teacherListItems">
+                <!-- Teacher list items will be dynamically populated here -->
+            </ul>
+        </div>
+        <div id="teacherDetails" style="display:none;">
+            <h2 id="teacherName"></h2>
+            <p>Current Votes: <span id="voteCount">0</span></p>
+            <button id="buyButton">Buy</button>
+            <button id="sellButton">Sell</button>
+            <button id="backButton">Back</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
