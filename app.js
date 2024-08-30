@@ -58,7 +58,7 @@ async function showTeacherDetails(teacher) {
 
 // Update votes
 async function updateVotes(action) {
-    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${currentTeacherId}`, {
+    const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -68,6 +68,7 @@ async function updateVotes(action) {
 
     const updatedTeacher = await response.json();
     voteCount.innerText = updatedTeacher.votes;
+
     // Update the chart with the new vote history
     updateChart(updatedTeacher.name, updatedTeacher.voteHistory);
 }
