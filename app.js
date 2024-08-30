@@ -7,6 +7,8 @@ const buyButton = document.getElementById("buyButton");
 const sellButton = document.getElementById("sellButton");
 const backButton = document.getElementById("backButton");
 
+const API_URL = 'https://amyx-56096bb96796.herokuapp.com/api/teachers'; // Replace with your Heroku app URL
+
 let currentTeacherId = null;
 
 // Fetch teachers from backend
