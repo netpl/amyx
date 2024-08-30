@@ -33,7 +33,7 @@ function populateTeacherList(teachers) {
 }
 
 // Show teacher details and voting options
-function showTeacherDetails(teacher) {
+async function showTeacherDetails(teacher) {
     currentTeacherId = teacher._id;
     teacherDetails.style.display = 'block';
     teacherList.parentNode.style.display = 'none';
