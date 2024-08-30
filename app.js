@@ -1,5 +1,3 @@
-const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your Heroku app URL
-
 // Elements
 const teacherList = document.getElementById("teacherListItems");
 const teacherDetails = document.getElementById("teacherDetails");
@@ -11,11 +9,13 @@ const backButton = document.getElementById("backButton");
 const votingChartContainer = document.getElementById("votingChartContainer");
 const votingChartCanvas = document.getElementById("votingChart");
 
+const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your Heroku app URL
+
 let currentTeacherId = null;
 
 // Fetch teachers from backend
 async function fetchTeachers() {
-    const response = await fetch(`${API_URL}/api/teachers`);
+    const response = await fetch('https://amyx-56096bb96796.herokuapp.com/api/teachers');
     const teachers = await response.json();
     populateTeacherList(teachers);
 }
@@ -35,7 +35,6 @@ function populateTeacherList(teachers) {
 function showTeacherDetails(teacher) {
     currentTeacherId = teacher._id;
     teacherDetails.style.display = 'block';
-    votingChartContainer.style.display = 'block';
     teacherList.parentNode.style.display = 'none';
     teacherName.innerText = teacher.name;
     voteCount.innerText = teacher.votes;
@@ -44,18 +43,14 @@ function showTeacherDetails(teacher) {
     sellButton.onclick = () => updateVotes('sell');
     backButton.onclick = () => {
         teacherDetails.style.display = 'none';
-        votingChartContainer.style.display = 'none';
         teacherList.parentNode.style.display = 'block';
         fetchTeachers();
     };
-
-    // Fetch and render chart data
-    fetchVotingData();
 }
 
 // Update votes
 async function updateVotes(action) {
-    const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}`, {
+    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${currentTeacherId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -65,55 +60,6 @@ async function updateVotes(action) {
 
     const updatedTeacher = await response.json();
     voteCount.innerText = updatedTeacher.votes;
-
-    // Update chart data
-    fetchVotingData();
-}
-
-// Fetch voting data
-async function fetchVotingData() {
-    const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}/voting-data`);
-    if (response.ok) {
-        const votingData = await response.json();
-        renderVotingChart(votingData);
-    } else {
-        console.error('Failed to fetch voting data');
-    }
-}
-
-// Render candlestick chart using Chart.js
-function renderVotingChart(data) {
-    const ctx = votingChartCanvas.getContext('2d');
-
-    const formattedData = data.map(item => {
-        return {
-            x: new Date(item.time),
-            o: item.open,
-            h: item.high,
-            l: item.low,
-            c: item.close
-        };
-    });
-
-    new Chart(ctx, {
-        type: 'candlestick',
-        data: {
-            datasets: [{
-                label: 'Voting Data',
-                data: formattedData,
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'minute'
-                    }
-                }
-            }
-        }
-    });
 }
 
 // Initialize app
