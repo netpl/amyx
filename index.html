@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,6 +16,10 @@
                 <!-- Teacher list items will be dynamically populated here -->
             </ul>
         </div>
+        <div id="votingChartContainer" style="display:none;">
+            <h2>Voting Chart</h2>
+            <canvas id="votingChart"></canvas>
+        </div>
         <div id="teacherDetails" style="display:none;">
             <h2 id="teacherName"></h2>
             <p>현재 득표수: <span id="voteCount">0</span></p>
@@ -29,6 +34,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial/dist/chartjs-chart-financial.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
