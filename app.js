@@ -119,7 +119,6 @@ addTeacherButton.addEventListener('click', async () => {
     }
 
     try {
-        // Send POST request to add the new teacher
         const response = await fetch(`${API_URL}/api/teachers`, {
             method: 'POST',
             headers: {
@@ -133,10 +132,12 @@ addTeacherButton.addEventListener('click', async () => {
             teacherNameInput.value = ''; // Clear the input field
             fetchTeachers(); // Refresh the teacher list
         } else {
-            alert('Failed to add teacher.');
+            const errorData = await response.json();
+            console.error('Error adding teacher:', errorData.message);
+            alert('Failed to add teacher: ' + errorData.message);
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Network Error:', error);
         alert('Error adding teacher. Check console for details.');
     }
 });
