@@ -12,6 +12,7 @@ const votingChartCanvas = document.getElementById("votingChart");
 const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your Heroku app URL
 
 let currentTeacherId = null;
+let votesChart = null;  // Declare the chart variable
 
 // Fetch teachers from backend
 async function fetchTeachers() {
@@ -39,6 +40,9 @@ function showTeacherDetails(teacher) {
     teacherName.innerText = teacher.name;
     voteCount.innerText = teacher.votes;
 
+    // Create or update the chart
+    updateChart(teacher.name, teacher.votes);
+
     buyButton.onclick = () => updateVotes('buy');
     sellButton.onclick = () => updateVotes('sell');
     backButton.onclick = () => {
@@ -60,6 +64,41 @@ async function updateVotes(action) {
 
     const updatedTeacher = await response.json();
     voteCount.innerText = updatedTeacher.votes;
+    // Update the chart with the new vote count
+    updateChart(updatedTeacher.name, updatedTeacher.votes);
+}
+
+// Function to update the chart
+function updateChart(teacherName, votes) {
+    const ctx = document.getElementById('votesChart').getContext('2d');
+
+    if (votesChart) {
+        // Update the existing chart
+        votesChart.data.datasets[0].data = [votes];
+        votesChart.update();
+    } else {
+        // Create a new chart
+        votesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [teacherName],
+                datasets: [{
+                    label: 'Votes',
+                    data: [votes],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
 }
 
 // Initialize app
