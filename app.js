@@ -141,6 +141,42 @@ async function fetchVoteHistory(teacherId) {
     renderCandlestickChart(teacher.voteHistory);
 }
 
+// AdD TEACHERS
+const addTeacherButton = document.getElementById('addTeacherButton');
+const teacherNameInput = document.getElementById('teacherNameInput');
+
+// Event listener for adding a new teacher
+addTeacherButton.addEventListener('click', async () => {
+    const teacherName = teacherNameInput.value.trim();
+    
+    if (teacherName === '') {
+        alert('Please enter a teacher name.');
+        return;
+    }
+
+    try {
+        // Send POST request to add the new teacher
+        const response = await fetch(`${API_URL}/api/teachers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: teacherName })
+        });
+
+        if (response.ok) {
+            alert('Teacher added successfully!');
+            teacherNameInput.value = ''; // Clear the input field
+            fetchTeachers(); // Refresh the teacher list
+        } else {
+            alert('Failed to add teacher.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding teacher. Check console for details.');
+    }
+});
+
 // Render candlestick chart using Chart.js
 function renderCandlestickChart(voteHistory) {
     const ctx = chartContainer.getContext('2d');
@@ -176,41 +212,3 @@ function renderCandlestickChart(voteHistory) {
 
 // Initialize app
 fetchTeachers();
-
-// Initialize app
-fetchTeachers();
-// Elements
-const addTeacherButton = document.getElementById('addTeacherButton');
-const teacherNameInput = document.getElementById('teacherNameInput');
-
-// Function to add a new teacher
-addTeacherButton.addEventListener('click', async () => {
-    const teacherName = teacherNameInput.value.trim();
-    
-    if (teacherName === '') {
-        alert('Please enter a teacher name.');
-        return;
-    }
-
-    try {
-        // Send POST request to add the new teacher
-        const response = await fetch(`${API_URL}/api/teachers`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name: teacherName })
-        });
-
-        if (response.ok) {
-            alert('Teacher added successfully!');
-            teacherNameInput.value = ''; // Clear the input field
-            fetchTeachers(); // Refresh the teacher list
-        } else {
-            alert('Failed to add teacher.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error adding teacher. Check console for details.');
-    }
-});
