@@ -105,6 +105,80 @@ async function fetchVoteHistory(teacherId) {
     }));
 }
 
+const chartContainer = document.createElement('canvas');
+teacherDetails.appendChild(chartContainer);
+
+// Fetch teachers from backend
+async function fetchTeachers() {
+    const response = await fetch(`${API_URL}/api/teachers`);
+    const teachers = await response.json();
+    populateTeacherList(teachers);
+}
+
+// Show teacher details and voting options
+function showTeacherDetails(teacher) {
+    currentTeacherId = teacher._id;
+    teacherDetails.style.display = 'block';
+    teacherList.parentNode.style.display = 'none';
+    teacherName.innerText = teacher.name;
+    voteCount.innerText = teacher.votes;
+
+    fetchVoteHistory(teacher._id);
+
+    buyButton.onclick = () => updateVotes('buy');
+    sellButton.onclick = () => updateVotes('sell');
+    backButton.onclick = () => {
+        teacherDetails.style.display = 'none';
+        teacherList.parentNode.style.display = 'block';
+        fetchTeachers();
+    };
+}
+
+// Fetch vote history for the chart
+async function fetchVoteHistory(teacherId) {
+    const response = await fetch(`${API_URL}/api/teachers/${teacherId}`);
+    const teacher = await response.json();
+    renderCandlestickChart(teacher.voteHistory);
+}
+
+// Render candlestick chart using Chart.js
+function renderCandlestickChart(voteHistory) {
+    const ctx = chartContainer.getContext('2d');
+
+    const data = voteHistory.map(record => ({
+        t: new Date(record.date),
+        o: record.open,
+        h: record.high,
+        l: record.low,
+        c: record.close
+    }));
+
+    new Chart(ctx, {
+        type: 'candlestick',
+        data: {
+            datasets: [{
+                label: 'Vote History',
+                data: data
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Initialize app
+fetchTeachers();
+
+// Initialize app
+fetchTeachers();
 // Elements
 const addTeacherButton = document.getElementById('addTeacherButton');
 const teacherNameInput = document.getElementById('teacherNameInput');
@@ -119,6 +193,7 @@ addTeacherButton.addEventListener('click', async () => {
     }
 
     try {
+        // Send POST request to add the new teacher
         const response = await fetch(`${API_URL}/api/teachers`, {
             method: 'POST',
             headers: {
@@ -132,15 +207,10 @@ addTeacherButton.addEventListener('click', async () => {
             teacherNameInput.value = ''; // Clear the input field
             fetchTeachers(); // Refresh the teacher list
         } else {
-            const errorData = await response.json();
-            console.error('Error adding teacher:', errorData.message);
-            alert('Failed to add teacher: ' + errorData.message);
+            alert('Failed to add teacher.');
         }
     } catch (error) {
-        console.error('Network Error:', error);
+        console.error('Error:', error);
         alert('Error adding teacher. Check console for details.');
     }
 });
-
-// Initialize app
-fetchTeachers();
