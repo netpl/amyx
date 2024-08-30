@@ -39,7 +39,7 @@ async function showTeacherDetails(teacher) {
     voteCount.innerText = teacher.votes;
 
     // Fetch the teacher details to get vote history
-    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${teacher._id}`);
+    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${currentTeacherId}`);
     const detailedTeacher = await response.json();
     
     // Create or update the time-based chart
@@ -73,7 +73,7 @@ async function updateVotes(action) {
 
 // Function to update the chart
 // Function to update the chart
-function updateChart(teacherName, voteHistory) {
+async function updateChart(teacherName, voteHistory) {
     const ctx = document.getElementById('votesChart').getContext('2d');
     
     const timestamps = voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
