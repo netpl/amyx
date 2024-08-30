@@ -40,6 +40,10 @@ function showTeacherDetails(teacher) {
     teacherName.innerText = teacher.name;
     voteCount.innerText = teacher.votes;
 
+    // Fetch the teacher details to get vote history
+    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${teacher._id}`);
+    const detailedTeacher = await response.json();
+    
     // Create or update the chart
     updateChart(teacher.name, teacher.votes);
 
@@ -64,34 +68,46 @@ async function updateVotes(action) {
 
     const updatedTeacher = await response.json();
     voteCount.innerText = updatedTeacher.votes;
-    // Update the chart with the new vote count
-    updateChart(updatedTeacher.name, updatedTeacher.votes);
+    // Update the chart with the new vote history
+    updateChart(updatedTeacher.name, updatedTeacher.voteHistory);
 }
 
 // Function to update the chart
-function updateChart(teacherName, votes) {
+// Function to update the chart
+function updateChart(teacherName, voteHistory) {
     const ctx = document.getElementById('votesChart').getContext('2d');
+    
+    const timestamps = voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+    const votes = voteHistory.map(entry => entry.votes);
 
     if (votesChart) {
         // Update the existing chart
-        votesChart.data.datasets[0].data = [votes];
+        votesChart.data.labels = timestamps;
+        votesChart.data.datasets[0].data = votes;
         votesChart.update();
     } else {
         // Create a new chart
         votesChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: [teacherName],
+                labels: timestamps,
                 datasets: [{
-                    label: 'Votes',
-                    data: [votes],
+                    label: `Votes for ${teacherName}`,
+                    data: votes,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    fill: false
                 }]
             },
             options: {
                 scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        }
+                    },
                     y: {
                         beginAtZero: true
                     }
