@@ -11,7 +11,7 @@ let currentTeacherId = null;
 
 // Fetch teachers from backend
 async function fetchTeachers() {
-    const response = await fetch('https://amy-f5275ea879a6.herokuapp.com/api/teachers');
+    const response = await fetch('https://amyx-56096bb96796.herokuapp.com/api/teachers');
     const teachers = await response.json();
     populateTeacherList(teachers);
 }
@@ -46,7 +46,7 @@ function showTeacherDetails(teacher) {
 
 // Update votes
 async function updateVotes(action) {
-    const response = await fetch(` https://amy-f5275ea879a6.herokuapp.com/api/teachers/${currentTeacherId}`, {
+    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${currentTeacherId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
