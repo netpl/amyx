@@ -39,7 +39,7 @@ async function showTeacherDetails(teacher) {
     voteCount.innerText = teacher.votes;
 
     // Fetch the teacher details to get vote history
-    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${currentTeacherId}`);
+    const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${teacher._id}`);
     const detailedTeacher = await response.json();
     
     // Create or update the time-based chart
@@ -54,26 +54,10 @@ async function showTeacherDetails(teacher) {
     };
 }
 
-// Update votes
-async function updateVotes(action) {
-    const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ vote: action })
-    });
-
-    const updatedTeacher = await response.json();
-    voteCount.innerText = updatedTeacher.votes;
-
-    // Update the chart with the new vote history
-    updateChart(updatedTeacher.name, updatedTeacher.voteHistory);
-}
 
 // Function to update the chart
 // Function to update the chart
-async function updateChart(teacherName, voteHistory) {
+    function updateChart(teacherName, voteHistory) {
     const ctx = document.getElementById('votesChart').getContext('2d');
     
     const timestamps = voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
@@ -114,6 +98,24 @@ async function updateChart(teacherName, voteHistory) {
             }
         });
     }
+}
+
+
+// Update votes
+async function updateVotes(action) {
+    const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ vote: action })
+    });
+
+    const updatedTeacher = await response.json();
+    voteCount.innerText = updatedTeacher.votes;
+
+    // Update the chart with the new vote history
+    updateChart(updatedTeacher.name, updatedTeacher.voteHistory);
 }
 
 // Initialize app
