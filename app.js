@@ -60,3 +60,32 @@ async function updateVotes(action) {
 
 // Initialize app
 fetchTeachers();
+
+const addTeacherButton = document.getElementById('addTeacherButton');
+const teacherNameInput = document.getElementById('teacherNameInput');
+
+addTeacherButton.addEventListener('click', async () => {
+    const teacherName = teacherNameInput.value.trim();
+    
+    if (teacherName === '') {
+        alert('Please enter a teacher name.');
+        return;
+    }
+
+    // Send POST request to add the new teacher
+    const response = await fetch(`${API_URL}/api/teachers`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: teacherName })
+    });
+
+    if (response.ok) {
+        alert('Teacher added successfully!');
+        teacherNameInput.value = ''; // Clear the input field
+        fetchTeachers(); // Refresh the teacher list
+    } else {
+        alert('Failed to add teacher.');
+    }
+});

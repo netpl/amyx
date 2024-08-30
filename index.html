@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Voting App</title>
+    <title>선생에게 한 표를</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,10 +17,15 @@
         </div>
         <div id="teacherDetails" style="display:none;">
             <h2 id="teacherName"></h2>
-            <p>Current Votes: <span id="voteCount">0</span></p>
-            <button id="buyButton">Buy</button>
-            <button id="sellButton">Sell</button>
-            <button id="backButton">Back</button>
+            <p>현재 득표수: <span id="voteCount">0</span></p>
+            <button id="buyButton">매수</button>
+            <button id="sellButton">매도</button>
+            <button id="backButton">이전</button>
+        </div>
+        <div id="addTeacherForm">
+            <h2>선생 추가</h2>
+            <input type="text" id="teacherNameInput" placeholder="Teacher Name">
+            <button id="addTeacherButton">추가해버리기</button>
         </div>
     </div>
 
