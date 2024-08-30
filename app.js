@@ -113,5 +113,39 @@ function renderVotingChart(data) {
     });
 }
 
+const addTeacherButton = document.getElementById('addTeacherButton');
+const teacherNameInput = document.getElementById('teacherNameInput');
+
+addTeacherButton.addEventListener('click', async () => {
+    const teacherName = teacherNameInput.value.trim();
+    
+    if (teacherName === '') {
+        alert('Please enter a teacher name.');
+        return;
+    }
+
+    try {
+        // Send POST request to add the new teacher
+        const response = await fetch(`${API_URL}/api/teachers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: teacherName })
+        });
+
+        if (response.ok) {
+            alert('Teacher added successfully!');
+            teacherNameInput.value = ''; // Clear the input field
+            fetchTeachers(); // Refresh the teacher list
+        } else {
+            alert('Failed to add teacher.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding teacher. Check console for details.');
+    }
+});
+
 // Initialize app
 fetchTeachers();
