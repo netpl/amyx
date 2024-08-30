@@ -11,7 +11,6 @@ const votingChartContainer = document.getElementById("votingChartContainer");
 const votingChartCanvas = document.getElementById("votingChart");
 
 let currentTeacherId = null;
-let votingData = [];  // To store the voting data for chart
 
 // Fetch teachers from backend
 async function fetchTeachers() {
@@ -70,18 +69,45 @@ async function updateVotes(action) {
     fetchVotingData();
 }
 
-// Fetch voting data (example data structure; should be adjusted based on actual implementation)
+// Fetch voting data
 async function fetchVotingData() {
     const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}/voting-data`);
-    votingData = await response.json(); // Adjust this according to your backend API
-    renderVotingChart(votingData);
+    if (response.ok) {
+        const votingData = await response.json();
+        renderVotingChart(votingData);
+    } else {
+        console.error('Failed to fetch voting data');
+    }
 }
+
+router.patch('/:id', async (req, res) => {
+    try {
+        const teacher = await Teacher.findById(req.params.id);
+        if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
+
+        const voteValue = req.body.vote === 'buy' ? 1 : -1;
+
+        // Update the teacher's vote count
+        teacher.votes += voteValue;
+        const updatedTeacher = await teacher.save();
+
+        // Record the vote in the Votes collection
+        const newVote = new Votes({
+            teacherId: req.params.id,
+            votes: voteValue
+        });
+        await newVote.save();
+
+        res.json(updatedTeacher);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
 
 // Render candlestick chart using Chart.js
 function renderVotingChart(data) {
     const ctx = votingChartCanvas.getContext('2d');
 
-    // Format the data for the candlestick chart
     const formattedData = data.map(item => {
         return {
             x: new Date(item.time),  // Assuming 'time' is a timestamp
@@ -112,6 +138,7 @@ function renderVotingChart(data) {
         }
     });
 }
+
 
 const addTeacherButton = document.getElementById('addTeacherButton');
 const teacherNameInput = document.getElementById('teacherNameInput');
