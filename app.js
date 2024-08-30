@@ -31,55 +31,6 @@ function populateTeacherList(teachers) {
     });
 }
 
-// Show teacher details and voting options
-function showTeacherDetails(teacher) {
-    currentTeacherId = teacher._id;
-    teacherDetails.style.display = 'block';
-    teacherList.parentNode.style.display = 'none';
-    teacherName.innerText = teacher.name;
-    voteCount.innerText = teacher.votes;
-
-    buyButton.onclick = () => updateVotes('buy');
-    sellButton.onclick = () => updateVotes('sell');
-    backButton.onclick = () => {
-        teacherDetails.style.display = 'none';
-        teacherList.parentNode.style.display = 'block';
-        fetchTeachers();
-    };
-
-    // Fetch historical vote data
-    const votingData = await fetchVoteHistory(teacher._id);
-
-    // Show the chart container
-    document.getElementById("chartContainer").style.display = "block";
-
-    // Initialize or update the candlestick chart
-    let options = {
-        series: [{
-            data: votingData
-        }],
-        chart: {
-            type: 'candlestick',
-            height: 350
-        },
-        title: {
-            text: 'Voting Trends',
-            align: 'left'
-        },
-        xaxis: {
-            type: 'datetime'
-        },
-        yaxis: {
-            tooltip: {
-                enabled: true
-            }
-        }
-    };
-
-    let chart = new ApexCharts(document.querySelector("#candlestickChart"), options);
-    chart.render();
-}
-
 // Update votes
 async function updateVotes(action) {
     const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${currentTeacherId}`, {
@@ -176,6 +127,55 @@ addTeacherButton.addEventListener('click', async () => {
         alert('Error adding teacher. Check console for details.');
     }
 });
+
+// Show teacher details and voting options
+function showTeacherDetails(teacher) {
+    currentTeacherId = teacher._id;
+    teacherDetails.style.display = 'block';
+    teacherList.parentNode.style.display = 'none';
+    teacherName.innerText = teacher.name;
+    voteCount.innerText = teacher.votes;
+
+    buyButton.onclick = () => updateVotes('buy');
+    sellButton.onclick = () => updateVotes('sell');
+    backButton.onclick = () => {
+        teacherDetails.style.display = 'none';
+        teacherList.parentNode.style.display = 'block';
+        fetchTeachers();
+    };
+
+    // Fetch historical vote data
+    const votingData = await fetchVoteHistory(teacher._id);
+
+    // Show the chart container
+    document.getElementById("chartContainer").style.display = "block";
+
+    // Initialize or update the candlestick chart
+    let options = {
+        series: [{
+            data: votingData
+        }],
+        chart: {
+            type: 'candlestick',
+            height: 350
+        },
+        title: {
+            text: 'Voting Trends',
+            align: 'left'
+        },
+        xaxis: {
+            type: 'datetime'
+        },
+        yaxis: {
+            tooltip: {
+                enabled: true
+            }
+        }
+    };
+
+    let chart = new ApexCharts(document.querySelector("#candlestickChart"), options);
+    chart.render();
+}
 
 // Render candlestick chart using Chart.js
 function renderCandlestickChart(voteHistory) {
