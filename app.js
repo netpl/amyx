@@ -6,8 +6,6 @@ const voteCount = document.getElementById("voteCount");
 const buyButton = document.getElementById("buyButton");
 const sellButton = document.getElementById("sellButton");
 const backButton = document.getElementById("backButton");
-const votingChartContainer = document.getElementById("votingChartContainer");
-const votingChartCanvas = document.getElementById("votingChart");
 
 const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your Heroku app URL
 
@@ -44,8 +42,8 @@ async function showTeacherDetails(teacher) {
     const response = await fetch(`https://amyx-56096bb96796.herokuapp.com/api/teachers/${teacher._id}`);
     const detailedTeacher = await response.json();
     
-    // Create or update the chart
-    updateChart(teacher.name, teacher.votes);
+    // Create or update the time-based chart
+    updateChart(detailedTeacher.name, detailedTeacher.voteHistory);
 
     buyButton.onclick = () => updateVotes('buy');
     sellButton.onclick = () => updateVotes('sell');
