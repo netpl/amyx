@@ -62,6 +62,9 @@ async function updateVotes(action) {
     voteCount.innerText = updatedTeacher.votes;
 }
 
+// Initialize app
+fetchTeachers();
+
 // Add Teachers
 const addTeacherButton = document.getElementById('addTeacherButton');
 const teacherNameInput = document.getElementById('teacherNameInput');
@@ -101,6 +104,3 @@ addTeacherButton.addEventListener('click', async () => {
         alert('An error occurred while adding the teacher.');
     }
 });
-
-// Initialize app
-fetchTeachers();
