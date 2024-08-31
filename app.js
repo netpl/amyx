@@ -11,6 +11,8 @@ const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your 
 
 let currentTeacherId = null;
 let votesChart = null;  // Declare the chart variable
+let currentChartType = 'line';  // Start with line chart
+
 
 // Fetch teachers from backend
 async function fetchTeachers() {
@@ -42,7 +44,6 @@ async function showTeacherDetails(teacher) {
     teacherList.parentNode.style.display = 'none';
     teacherName.innerText = teacher.name;
     voteCount.innerText = teacher.votes;
-    document.getElementById('toggleChartSwitch').onchange = toggleChartType;
 
     try {
         const response = await fetch(`${API_URL}/api/teachers/${teacher._id}`);
@@ -88,25 +89,68 @@ function updateChart(teacherName, voteHistory) {
     const timestamps = voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
     const votes = voteHistory.map(entry => entry.votes);
 
+    // Define data for line and candlestick charts
+    const lineChartData = {
+        labels: timestamps,
+        datasets: [{
+            label: `Votes for ${teacherName}`,
+            data: votes,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+            fill: false
+        }]
+    };
+
+    const candlestickData = voteHistory.map(entry => ({
+        x: new Date(entry.timestamp),
+        o: entry.votes,
+        h: entry.votes + 2, // Placeholder for high
+        l: entry.votes - 2, // Placeholder for low
+        c: entry.votes
+    }));
+
+    const candlestickChartData = {
+        datasets: [{
+            label: `Votes for ${teacherName}`,
+            data: candlestickData,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+        }]
+    };
+
     if (votesChart) {
-        votesChart.data.labels = timestamps;
-        votesChart.data.datasets[0].data = votes;
-        votesChart.update();
-    } else {
+        votesChart.destroy(); // Destroy the existing chart before creating a new one
+    }
+
+    if (currentChartType === 'line') {
         votesChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: timestamps,
-                datasets: [{
-                    label: `Votes for ${teacherName}`,
-                    data: votes,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
+            type: 'line',
+            data: lineChartData,
             options: {
                 scales: {
+                    x: {
+                        type: 'category'
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    } else if (currentChartType === 'candlestick') {
+        votesChart = new Chart(ctx, {
+            type: 'candlestick',
+            data: candlestickChartData,
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        }
+                    },
                     y: {
                         beginAtZero: true
                     }
@@ -116,17 +160,33 @@ function updateChart(teacherName, voteHistory) {
     }
 }
 
+
+// Function to toggle the chart type
 function toggleChartType() {
-    const isChecked = document.getElementById('toggleChartSwitch').checked;
+    const isChecked = toggleChartSwitch.checked;
+    console.log('Toggle switch state:', isChecked);
+
     if (isChecked) {
         currentChartType = 'candlestick';
-        document.getElementById('toggleChartLabel').innerText = 'Candlestick Chart';
+        toggleChartLabel.innerText = 'Candlestick Chart';
     } else {
         currentChartType = 'line';
-        document.getElementById('toggleChartLabel').innerText = 'Line Chart';
+        toggleChartLabel.innerText = 'Line Chart';
     }
+
+    // Re-render the chart with the new type
     updateChart(teacherName.innerText, getCurrentVoteHistory());
 }
+
+// Get the current vote history for the chart
+function getCurrentVoteHistory() {
+    // Assuming detailedTeacher is the current teacher's details that are fetched in showTeacherDetails
+    // If you're storing this data elsewhere, make sure to retrieve it from the correct source
+    return detailedTeacher.voteHistory;
+}
+
+// Attach the toggle function to the switch
+toggleChartSwitch.onchange = toggleChartType;
 
 // Initialize app
 fetchTeachers();
