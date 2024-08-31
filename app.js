@@ -115,7 +115,7 @@ function updateChart(teacherName, voteHistory) {
     }
 }
 
-/ Handle creating a new teacher
+// Handle creating a new teacher
 async function createTeacher() {
     const teacherName = document.getElementById('newTeacherName').value.trim();
     const errorMessage = document.getElementById('errorMessage');
