@@ -115,25 +115,17 @@ function updateChart(teacherName, voteHistory) {
     }
 }
 
+/ Handle creating a new teacher
+async function createTeacher() {
+    const teacherName = document.getElementById('newTeacherName').value.trim();
+    const errorMessage = document.getElementById('errorMessage');
 
-// Initialize app
-fetchTeachers();
-
-// Add Teachers
-const addTeacherButton = document.getElementById('addTeacherButton');
-const teacherNameInput = document.getElementById('teacherNameInput');
-
-addTeacherButton.addEventListener('click', async () => {
-    const teacherName = teacherNameInput.value.trim();
-    console.log('Teacher Name:', teacherName); // Check the input value
-
-    if (teacherName === '') {
-        alert('Please enter a teacher name.');
+    if (!teacherName) {
+        errorMessage.innerText = 'Please enter a teacher name';
         return;
     }
 
     try {
-        console.log('Sending POST request...');
         const response = await fetch(`${API_URL}/api/teachers`, {
             method: 'POST',
             headers: {
@@ -141,20 +133,24 @@ addTeacherButton.addEventListener('click', async () => {
             },
             body: JSON.stringify({ name: teacherName })
         });
-        console.log('Response:', response);
 
-        if (response.ok) {
-            const newTeacher = await response.json();
-            console.log('New Teacher:', newTeacher);
-            alert(`Teacher "${newTeacher.name}" added successfully!`);
-            teacherNameInput.value = ''; // Clear the input field
-            fetchTeachers(); // Refresh the teacher list
-        } else {
+        if (response.status === 400) {
             const errorData = await response.json();
-            alert(`Failed to add teacher: ${errorData.message}`);
+            errorMessage.innerText = errorData.message;
+            return;
         }
+
+        const newTeacher = await response.json();
+        errorMessage.innerText = ''; // Clear any previous error messages
+        fetchTeachers(); // Refresh the teacher list
     } catch (error) {
-        console.error('Error adding teacher:', error);
-        alert('An error occurred while adding the teacher.');
+        console.error('Error creating teacher:', error);
+        errorMessage.innerText = 'An error occurred while creating the teacher';
     }
-});
+}
+
+// Attach the createTeacher function to the create teacher button
+document.getElementById('createTeacherButton').onclick = createTeacher;
+
+// Initialize app
+fetchTeachers();
