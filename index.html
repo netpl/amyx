@@ -26,10 +26,12 @@
             <!-- Canvas element for the chart -->
             <canvas id="votesChart" width="400" height="200"></canvas>
         </div>
-        <div id="addTeacherForm">
+        <!-- Form to create a new teacher -->
+        <div id="createTeacher">
             <h2>선생 추가</h2>
-            <input type="text" id="teacherNameInput" placeholder="Teacher Name">
-            <button id="addTeacherButton">추가해버리기</button>
+            <input type="text" id="newTeacherName" placeholder="Enter teacher name">
+            <button id="createTeacherButton">추가해버리기</button>
+            <p id="errorMessage" style="color: red;"></p>
         </div>
     </div>
 
