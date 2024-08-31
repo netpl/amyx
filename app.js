@@ -42,6 +42,7 @@ async function showTeacherDetails(teacher) {
     teacherList.parentNode.style.display = 'none';
     teacherName.innerText = teacher.name;
     voteCount.innerText = teacher.votes;
+    document.getElementById('toggleChartSwitch').onchange = toggleChartType;
 
     try {
         const response = await fetch(`${API_URL}/api/teachers/${teacher._id}`);
@@ -79,6 +80,7 @@ async function updateVotes(action) {
     }
 }
 
+
 // Function to update the chart
 function updateChart(teacherName, voteHistory) {
     const ctx = document.getElementById('votesChart').getContext('2d');
@@ -112,6 +114,18 @@ function updateChart(teacherName, voteHistory) {
             }
         });
     }
+}
+
+function toggleChartType() {
+    const isChecked = document.getElementById('toggleChartSwitch').checked;
+    if (isChecked) {
+        currentChartType = 'candlestick';
+        document.getElementById('toggleChartLabel').innerText = 'Candlestick Chart';
+    } else {
+        currentChartType = 'line';
+        document.getElementById('toggleChartLabel').innerText = 'Line Chart';
+    }
+    updateChart(teacherName.innerText, getCurrentVoteHistory());
 }
 
 // Initialize app
