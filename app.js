@@ -149,8 +149,9 @@ async function createTeacher() {
     }
 }
 
-// Attach the createTeacher function to the create teacher button
-document.getElementById('createTeacherButton').onclick = createTeacher;
-
 // Initialize app
 fetchTeachers();
+
+
+// Attach the createTeacher function to the create teacher button
+document.getElementById('createTeacherButton').onclick = createTeacher;
