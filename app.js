@@ -12,7 +12,7 @@ const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your 
 let currentTeacherId = null;
 let votesChart = null;  // Declare the chart variable
 let currentChartType = 'line';  // Start with line chart
-
+let detailedTeacher = null; // To store the current teacher's details
 
 // Fetch teachers from backend
 async function fetchTeachers() {
@@ -37,7 +37,7 @@ function populateTeacherList(teachers) {
     });
 }
 
-// Show teacher details and voting options
+/// Show teacher details and voting options
 async function showTeacherDetails(teacher) {
     currentTeacherId = teacher._id;
     teacherDetails.style.display = 'block';
@@ -47,7 +47,7 @@ async function showTeacherDetails(teacher) {
 
     try {
         const response = await fetch(`${API_URL}/api/teachers/${teacher._id}`);
-        const detailedTeacher = await response.json();
+        detailedTeacher = await response.json(); // Store the teacher details globally
         updateChart(detailedTeacher.name, detailedTeacher.voteHistory);
     } catch (error) {
         console.error('Error fetching teacher details:', error);
@@ -60,25 +60,6 @@ async function showTeacherDetails(teacher) {
         teacherList.parentNode.style.display = 'block';
         fetchTeachers();
     };
-}
-
-// Update votes
-async function updateVotes(action) {
-    try {
-        const response = await fetch(`${API_URL}/api/teachers/${currentTeacherId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ vote: action })
-        });
-
-        const updatedTeacher = await response.json();
-        voteCount.innerText = updatedTeacher.votes;
-        updateChart(updatedTeacher.name, updatedTeacher.voteHistory);
-    } catch (error) {
-        console.error('Error updating votes:', error);
-    }
 }
 
 
@@ -175,14 +156,7 @@ function toggleChartType() {
     }
 
     // Re-render the chart with the new type
-    updateChart(teacherName.innerText, getCurrentVoteHistory());
-}
-
-// Get the current vote history for the chart
-function getCurrentVoteHistory() {
-    // Assuming detailedTeacher is the current teacher's details that are fetched in showTeacherDetails
-    // If you're storing this data elsewhere, make sure to retrieve it from the correct source
-    return detailedTeacher.voteHistory;
+    updateChart(teacherName.innerText, detailedTeacher.voteHistory);
 }
 
 // Attach the toggle function to the switch
