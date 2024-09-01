@@ -87,76 +87,36 @@ function updateChart(teacherName, voteHistory) {
     const timestamps = voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
     const votes = voteHistory.map(entry => entry.votes);
 
-    // Define data for line and candlestick charts
-    const lineChartData = {
-        labels: timestamps,
-        datasets: [{
-            label: `Votes for ${teacherName}`,  // Update the label with the current teacher's name
-            data: votes,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            fill: false
-        }]
-    };
-
-    const candlestickData = voteHistory.map(entry => ({
-        x: new Date(entry.timestamp),
-        o: entry.votes,
-        h: entry.votes + 2, // Placeholder for high
-        l: entry.votes - 2, // Placeholder for low
-        c: entry.votes
-    }));
-
-    const candlestickChartData = {
-        datasets: [{
-            label: `Votes for ${teacherName}`,  // Update the label with the current teacher's name
-            data: candlestickData,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-        }]
-    };
-
     if (votesChart) {
-        votesChart.destroy(); // Destroy the existing chart before creating a new one
+        votesChart.destroy();  // Destroy any existing chart instance
     }
 
-    if (currentChartType === 'line') {
-        votesChart = new Chart(ctx, {
-            type: 'line',
-            data: lineChartData,
-            options: {
-                scales: {
-                    x: {
-                        type: 'category'
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
+    votesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,
+            datasets: [{
+                label: `Votes for ${teacherName}`,  // Set the legend label correctly
+                data: votes,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'category'
+                },
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
-    } else if (currentChartType === 'candlestick') {
-        votesChart = new Chart(ctx, {
-            type: 'candlestick',
-            data: candlestickChartData,
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
+        }
+    });
 }
+
 
 // Handle creating a new teacher
 async function createTeacher() {
