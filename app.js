@@ -131,7 +131,19 @@ function updateChart(teacherName, voteHistory) {
     });
 }
 
-// Compare all
+// Utility function for downsampling data
+function downsampleData(data, targetPoints) {
+    const downsampled = [];
+    const skip = Math.floor(data.length / targetPoints);
+
+    for (let i = 0; i < data.length; i += skip) {
+        downsampled.push(data[i]);
+    }
+
+    return downsampled;
+}
+
+// Function to compare all teachers
 function compareAllTeachers(teachers) {
     console.log('Compare All clicked');
 
@@ -164,7 +176,7 @@ function compareAllTeachers(teachers) {
     // Step 2: Prepare datasets for each teacher, ensuring alignment with all timestamps
     const datasets = teachers.map(teacher => {
         let lastKnownValue = null;
-        const data = allTimestamps.map(timestamp => {
+        let data = allTimestamps.map(timestamp => {
             const entry = teacher.voteHistory.find(e => new Date(e.timestamp).toLocaleTimeString() === timestamp);
             if (entry) {
                 lastKnownValue = entry.votes;  // Update the last known value
@@ -174,15 +186,18 @@ function compareAllTeachers(teachers) {
             }
         });
 
+        // Downsample the data to improve performance, target 100 points
+        data = downsampleData(data, 100);
+
         return {
             label: teacher.name,
             data: data,
             backgroundColor: getRandomColor(),
             borderColor: getRandomColor(),
-            borderWidth: 1,
+            borderWidth: 0.5,  // Reduce border width
             fill: false,
-            tension: 0.4,
-            pointRadius: 0
+            tension: 0.4,  // Smooth the curve
+            pointRadius: 1  // Smaller point radius
         };
     });
 
@@ -194,7 +209,7 @@ function compareAllTeachers(teachers) {
             datasets: datasets
         },
         options: {
-            animation: false, // Disable animations
+            animation: false,  // Disable animations for better performance
             scales: {
                 x: {
                     type: 'category',
