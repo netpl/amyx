@@ -131,17 +131,6 @@ function updateChart(teacherName, voteHistory) {
     });
 }
 
-// Utility function for downsampling data
-function downsampleData(data, targetPoints) {
-    const downsampled = [];
-    const skip = Math.floor(data.length / targetPoints);
-
-    for (let i = 0; i < data.length; i += skip) {
-        downsampled.push(data[i]);
-    }
-
-    return downsampled;
-}
 
 // Function to compare all teachers
 function compareAllTeachers(teachers) {
@@ -162,11 +151,19 @@ function compareAllTeachers(teachers) {
         compareAllChart.destroy();  // Destroy any existing chart instance
     }
 
-    // Step 1: Collect all unique timestamps across all teachers
+    // Calculate the cutoff date for 12 months ago
+    const currentDate = new Date();
+    const cutoffDate = new Date();
+    cutoffDate.setFullYear(currentDate.getFullYear() - 1);  // Subtract 1 year
+
+    // Step 1: Collect all unique timestamps within the last 12 months across all teachers
     let allTimestamps = new Set();
     teachers.forEach(teacher => {
         teacher.voteHistory.forEach(entry => {
-            allTimestamps.add(new Date(entry.timestamp).toLocaleTimeString());
+            const entryDate = new Date(entry.timestamp);
+            if (entryDate >= cutoffDate) {
+                allTimestamps.add(entryDate.toLocaleTimeString());
+            }
         });
     });
 
@@ -176,9 +173,9 @@ function compareAllTeachers(teachers) {
     // Step 2: Prepare datasets for each teacher, ensuring alignment with all timestamps
     const datasets = teachers.map(teacher => {
         let lastKnownValue = null;
-        let data = allTimestamps.map(timestamp => {
+        const data = allTimestamps.map(timestamp => {
             const entry = teacher.voteHistory.find(e => new Date(e.timestamp).toLocaleTimeString() === timestamp);
-            if (entry) {
+            if (entry && new Date(entry.timestamp) >= cutoffDate) {
                 lastKnownValue = entry.votes;  // Update the last known value
                 return entry.votes;
             } else {
@@ -186,18 +183,15 @@ function compareAllTeachers(teachers) {
             }
         });
 
-        // Downsample the data to improve performance, target 100 points
-        data = downsampleData(data, 100);
-
         return {
             label: teacher.name,
             data: data,
             backgroundColor: getRandomColor(),
             borderColor: getRandomColor(),
-            borderWidth: 0.5,  // Reduce border width
+            borderWidth: 1,
             fill: false,
-            tension: 0.4,  // Smooth the curve
-            pointRadius: 1  // Smaller point radius
+            tension: 0.4,
+            pointRadius: 0
         };
     });
 
@@ -209,7 +203,6 @@ function compareAllTeachers(teachers) {
             datasets: datasets
         },
         options: {
-            animation: false,  // Disable animations for better performance
             scales: {
                 x: {
                     type: 'category',
