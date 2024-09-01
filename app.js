@@ -140,23 +140,37 @@ function compareAllTeachers(teachers) {
         return;
     }
 
-    teacherDetails.style.display = 'none';
-    teacherList.parentNode.style.display = 'none';
-    compareAllDetails.style.display = 'block';
+    teacherDetails.style.display = 'none';  // Hide individual teacher details
+    teacherList.parentNode.style.display = 'none';  // Hide the teacher list
+    compareAllDetails.style.display = 'block';  // Show the compare all section
 
     const ctx = document.getElementById('compareAllChart').getContext('2d');
 
     if (compareAllChart) {
-        compareAllChart.destroy();
+        compareAllChart.destroy();  // Destroy any existing chart instance
     }
 
+    // Step 1: Collect all unique timestamps across all teachers
+    let allTimestamps = new Set();
+    teachers.forEach(teacher => {
+        teacher.voteHistory.forEach(entry => {
+            allTimestamps.add(new Date(entry.timestamp).toLocaleTimeString());
+        });
+    });
+
+    // Convert the set to an array and sort it (to maintain chronological order)
+    allTimestamps = Array.from(allTimestamps).sort();
+
+    // Step 2: Prepare datasets for each teacher, ensuring alignment with all timestamps
     const datasets = teachers.map(teacher => {
-        const timestamps = teacher.voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-        const votes = teacher.voteHistory.map(entry => entry.votes);
+        const data = allTimestamps.map(timestamp => {
+            const entry = teacher.voteHistory.find(e => new Date(e.timestamp).toLocaleTimeString() === timestamp);
+            return entry ? entry.votes : null;  // Use null for missing data points
+        });
 
         return {
             label: teacher.name,
-            data: votes,
+            data: data,
             backgroundColor: getRandomColor(),
             borderColor: getRandomColor(),
             borderWidth: 1,
@@ -166,10 +180,11 @@ function compareAllTeachers(teachers) {
         };
     });
 
+    // Step 3: Create the chart with aligned data
     compareAllChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: teachers[0].voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString()),
+            labels: allTimestamps,  // Use the full set of timestamps
             datasets: datasets
         },
         options: {
@@ -184,9 +199,10 @@ function compareAllTeachers(teachers) {
         }
     });
 
+    // Back button logic for "Compare All" view
     backButtonCompareAll.onclick = () => {
-        compareAllDetails.style.display = 'none';
-        teacherList.parentNode.style.display = 'block';
+        compareAllDetails.style.display = 'none';   // Hide the compare all section
+        teacherList.parentNode.style.display = 'block';  // Show the teacher list
     };
 }
 
