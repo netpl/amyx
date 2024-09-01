@@ -134,6 +134,13 @@ function updateChart(teacherName, voteHistory) {
 
 // Compare all
 function compareAllTeachers(teachers) {
+    console.log('Compare All clicked');
+    
+    if (teachers.length === 0) {
+        console.log('No teachers to compare');
+        return;
+    }
+
     const ctx = document.getElementById('votesChart').getContext('2d');
 
     if (votesChart) {
@@ -155,6 +162,8 @@ function compareAllTeachers(teachers) {
             pointRadius: 0
         };
     });
+
+    console.log('Datasets prepared for comparison:', datasets);
 
     votesChart = new Chart(ctx, {
         type: 'line',
