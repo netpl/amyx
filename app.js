@@ -30,19 +30,22 @@ async function fetchTeachers() {
 
 // Populate teacher list
 function populateTeacherList(teachers) {
-    teacherList.innerHTML = '';
+    teacherList.innerHTML = ''; // Clear the list
 
+    // Add the "Compare All" option first
+    const compareAllLi = document.createElement('li');
+    compareAllLi.innerText = 'Compare All';
+    compareAllLi.id = 'compareAllButton'; // Set an ID to ensure it's unique
+    compareAllLi.onclick = () => compareAllTeachers(teachers); // Add click event
+    teacherList.appendChild(compareAllLi);
+
+    // Populate the rest of the teacher list
     teachers.forEach(teacher => {
         const li = document.createElement('li');
         li.innerText = teacher.name;
         li.addEventListener('click', () => showTeacherDetails(teacher));
         teacherList.appendChild(li);
     });
-
-    // Show the "Compare All" button after the teachers are loaded
-    const compareAllButton = document.getElementById("compareAllButton");
-    compareAllButton.style.display = 'block';  // Show the button
-    compareAllButton.onclick = () => compareAllTeachers(teachers);
 }
 
 // Show teacher details and voting options
