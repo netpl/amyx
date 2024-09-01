@@ -1,20 +1,20 @@
 // Elements
 const teacherList = document.getElementById("teacherListItems");
 const teacherDetails = document.getElementById("teacherDetails");
+const compareAllDetails = document.getElementById("compareAllDetails");
 const teacherName = document.getElementById("teacherName");
 const voteCount = document.getElementById("voteCount");
 const buyButton = document.getElementById("buyButton");
 const sellButton = document.getElementById("sellButton");
 const backButton = document.getElementById("backButton");
-
-const compareAllButton = document.getElementById("compareAllButton");
+const backButtonCompareAll = document.getElementById("backButtonCompareAll");
 
 const API_URL = 'https://amyx-56096bb96796.herokuapp.com'; // Replace with your Heroku app URL
 
 let currentTeacherId = null;
-let votesChart = null;  // Declare the chart variable
+let votesChart = null;
+let compareAllChart = null;
 
-let detailedTeacher = null;
 
 // Fetch teachers from backend
 async function fetchTeachers() {
@@ -35,8 +35,8 @@ function populateTeacherList(teachers) {
     // Add the "Compare All" option first
     const compareAllLi = document.createElement('li');
     compareAllLi.innerText = 'Compare All';
-    compareAllLi.id = 'compareAllButton'; // Set an ID to ensure it's unique
-    compareAllLi.onclick = () => compareAllTeachers(teachers); // Add click event
+    compareAllLi.id = 'compareAllButton';
+    compareAllLi.onclick = () => compareAllTeachers(teachers);
     teacherList.appendChild(compareAllLi);
 
     // Populate the rest of the teacher list
@@ -52,12 +52,13 @@ async function showTeacherDetails(teacher) {
     currentTeacherId = teacher._id;
     teacherDetails.style.display = 'block';
     teacherList.parentNode.style.display = 'none';
+    compareAllDetails.style.display = 'none';
     teacherName.innerText = teacher.name;
     voteCount.innerText = teacher.votes;
 
     try {
         const response = await fetch(`${API_URL}/api/teachers/${teacher._id}`);
-        detailedTeacher = await response.json();
+        const detailedTeacher = await response.json();
         updateChart(detailedTeacher.name, detailedTeacher.voteHistory);
     } catch (error) {
         console.error('Error fetching teacher details:', error);
@@ -65,8 +66,6 @@ async function showTeacherDetails(teacher) {
 
     buyButton.onclick = () => updateVotes('buy');
     sellButton.onclick = () => updateVotes('sell');
-    
-    // Back button logic
     backButton.onclick = () => {
         teacherDetails.style.display = 'none';
         teacherList.parentNode.style.display = 'block';
@@ -85,14 +84,13 @@ async function updateVotes(action) {
             body: JSON.stringify({ vote: action })
         });
 
-        detailedTeacher = await response.json();
+        const detailedTeacher = await response.json();
         voteCount.innerText = detailedTeacher.votes;
         updateChart(detailedTeacher.name, detailedTeacher.voteHistory);
     } catch (error) {
         console.error('Error updating votes:', error);
     }
 }
-
 
 // Function to update the chart
 function updateChart(teacherName, voteHistory) {
@@ -110,14 +108,14 @@ function updateChart(teacherName, voteHistory) {
         data: {
             labels: timestamps,
             datasets: [{
-                label: `Votes for ${teacherName}`,  // Set the legend label correctly
+                label: `Votes for ${teacherName}`,
                 data: votes,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
                 fill: false,
-                tension: 0.4,  // Add tension to create smooth curves
-                pointRadius: 0  // Remove the dots/points from the line
+                tension: 0.4,
+                pointRadius: 0
             }]
         },
         options: {
@@ -136,26 +134,20 @@ function updateChart(teacherName, voteHistory) {
 // Compare all
 function compareAllTeachers(teachers) {
     console.log('Compare All clicked');
-    
+
     if (teachers.length === 0) {
         console.log('No teachers to compare');
         return;
     }
 
-    // Hide specific teacher details and display the chart area
-    document.getElementById('teacherName').style.display = 'none';
-    document.getElementById('teacherVotes').style.display = 'none';
-    buyButton.style.display = 'none';
-    sellButton.style.display = 'none';
-
-    // Show the teacherDetails div (which now just shows the chart)
-    teacherDetails.style.display = 'block';
+    teacherDetails.style.display = 'none';
     teacherList.parentNode.style.display = 'none';
+    compareAllDetails.style.display = 'block';
 
-    const ctx = document.getElementById('votesChart').getContext('2d');
+    const ctx = document.getElementById('compareAllChart').getContext('2d');
 
-    if (votesChart) {
-        votesChart.destroy();  // Destroy any existing chart instance
+    if (compareAllChart) {
+        compareAllChart.destroy();
     }
 
     const datasets = teachers.map(teacher => {
@@ -174,9 +166,7 @@ function compareAllTeachers(teachers) {
         };
     });
 
-    console.log('Datasets prepared for comparison:', datasets);
-
-    votesChart = new Chart(ctx, {
+    compareAllChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: teachers[0].voteHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString()),
@@ -193,6 +183,11 @@ function compareAllTeachers(teachers) {
             }
         }
     });
+
+    backButtonCompareAll.onclick = () => {
+        compareAllDetails.style.display = 'none';
+        teacherList.parentNode.style.display = 'block';
+    };
 }
 
 // Utility function to get a random color
@@ -204,7 +199,6 @@ function getRandomColor() {
     }
     return color;
 }
-
 
 
 // Handle creating a new teacher
