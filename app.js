@@ -31,6 +31,7 @@ async function fetchTeachers() {
 // Populate teacher list
 function populateTeacherList(teachers) {
     teacherList.innerHTML = '';
+
     teachers.forEach(teacher => {
         const li = document.createElement('li');
         li.innerText = teacher.name;
@@ -38,7 +39,9 @@ function populateTeacherList(teachers) {
         teacherList.appendChild(li);
     });
 
-    // Add event listener for "Compare All" functionality
+    // Show the "Compare All" button after the teachers are loaded
+    const compareAllButton = document.getElementById("compareAllButton");
+    compareAllButton.style.display = 'block';  // Show the button
     compareAllButton.onclick = () => compareAllTeachers(teachers);
 }
 
