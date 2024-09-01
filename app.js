@@ -158,8 +158,8 @@ function compareAllTeachers(teachers) {
         });
     });
 
-    // Convert the set to an array and sort it (to maintain chronological order)
-    allTimestamps = Array.from(allTimestamps).sort();
+    // Convert the set to an array and sort it in ascending order (oldest to newest)
+    allTimestamps = Array.from(allTimestamps).sort((a, b) => new Date(a) - new Date(b));
 
     // Step 2: Prepare datasets for each teacher, ensuring alignment with all timestamps
     const datasets = teachers.map(teacher => {
@@ -190,16 +190,24 @@ function compareAllTeachers(teachers) {
     compareAllChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: allTimestamps,  // Use the full set of timestamps
+            labels: allTimestamps,  // Use the full set of sorted timestamps
             datasets: datasets
         },
         options: {
             scales: {
                 x: {
-                    type: 'category'
+                    type: 'category',
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
                 },
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Votes'
+                    }
                 }
             }
         }
