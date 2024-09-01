@@ -163,9 +163,15 @@ function compareAllTeachers(teachers) {
 
     // Step 2: Prepare datasets for each teacher, ensuring alignment with all timestamps
     const datasets = teachers.map(teacher => {
+        let lastKnownValue = null;
         const data = allTimestamps.map(timestamp => {
             const entry = teacher.voteHistory.find(e => new Date(e.timestamp).toLocaleTimeString() === timestamp);
-            return entry ? entry.votes : null;  // Use null for missing data points
+            if (entry) {
+                lastKnownValue = entry.votes;  // Update the last known value
+                return entry.votes;
+            } else {
+                return lastKnownValue;  // Fill with the last known value
+            }
         });
 
         return {
