@@ -32,20 +32,20 @@ async function fetchTeachers() {
 function populateTeacherList(teachers) {
     teacherList.innerHTML = ''; // Clear the list
 
-    // Add the "Compare All" option first
-    const compareAllLi = document.createElement('li');
-    compareAllLi.innerText = '비교분석';
-    compareAllLi.id = 'compareAllButton';
-    compareAllLi.onclick = () => compareAllTeachers(teachers);
-    teacherList.appendChild(compareAllLi);
-
-    // Populate the rest of the teacher list
+    // Populate the rest of the teacher list first
     teachers.forEach(teacher => {
         const li = document.createElement('li');
         li.innerText = teacher.name;
         li.addEventListener('click', () => showTeacherDetails(teacher));
         teacherList.appendChild(li);
     });
+
+    // Add the "Compare All" option last
+    const compareAllLi = document.createElement('li');
+    compareAllLi.innerText = '비교분석';
+    compareAllLi.id = 'compareAllButton';
+    compareAllLi.onclick = () => compareAllTeachers(teachers);
+    teacherList.appendChild(compareAllLi);
 }
 
 async function showTeacherDetails(teacher) {
