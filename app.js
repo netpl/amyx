@@ -48,7 +48,6 @@ function populateTeacherList(teachers) {
     });
 }
 
-// Show teacher details and voting options
 async function showTeacherDetails(teacher) {
     currentTeacherId = teacher._id;
     teacherDetails.style.display = 'block';
@@ -66,6 +65,8 @@ async function showTeacherDetails(teacher) {
 
     buyButton.onclick = () => updateVotes('buy');
     sellButton.onclick = () => updateVotes('sell');
+    
+    // Back button logic
     backButton.onclick = () => {
         teacherDetails.style.display = 'none';
         teacherList.parentNode.style.display = 'block';
@@ -140,6 +141,16 @@ function compareAllTeachers(teachers) {
         console.log('No teachers to compare');
         return;
     }
+
+    // Hide specific teacher details and display the chart area
+    document.getElementById('teacherName').style.display = 'none';
+    document.getElementById('teacherVotes').style.display = 'none';
+    buyButton.style.display = 'none';
+    sellButton.style.display = 'none';
+
+    // Show the teacherDetails div (which now just shows the chart)
+    teacherDetails.style.display = 'block';
+    teacherList.parentNode.style.display = 'none';
 
     const ctx = document.getElementById('votesChart').getContext('2d');
 
