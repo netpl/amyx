@@ -194,6 +194,7 @@ function compareAllTeachers(teachers) {
             datasets: datasets
         },
         options: {
+            animation: false, // Disable animations
             scales: {
                 x: {
                     type: 'category',
