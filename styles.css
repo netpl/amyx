@@ -47,6 +47,10 @@ button#backButton {
     background-color: #555;
 }
 
+button#backButtonCompareAll {
+    background-color: #555;
+}
+
 #teacherDetails {
     margin-top: 20px;
     text-align: center;

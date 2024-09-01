@@ -34,7 +34,7 @@ function populateTeacherList(teachers) {
 
     // Add the "Compare All" option first
     const compareAllLi = document.createElement('li');
-    compareAllLi.innerText = 'Compare All';
+    compareAllLi.innerText = '비교분석';
     compareAllLi.id = 'compareAllButton';
     compareAllLi.onclick = () => compareAllTeachers(teachers);
     teacherList.appendChild(compareAllLi);
