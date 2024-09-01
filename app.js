@@ -102,7 +102,8 @@ function updateChart(teacherName, voteHistory) {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
                 fill: false,
-                tension: 0.4
+                tension: 0.4,
+                pointRadius: 0
             }]
         },
         options: {
