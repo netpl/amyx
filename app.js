@@ -280,3 +280,9 @@ fetchTeachers();
 
 // Attach the createTeacher function to the create teacher button
 document.getElementById('createTeacherButton').onclick = createTeacher;
+
+
+// disable Safari zooming
+document.addEventListener('gesturestart', function (e) {
+    e.preventDefault();
+});
