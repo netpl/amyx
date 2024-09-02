@@ -37,10 +37,12 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 button#sellButton {
     background-color: #f44336;
+    touch-action: manipulation;
 }
 
 button#backButton {
