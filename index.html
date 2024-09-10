@@ -9,41 +9,6 @@
     <link rel="stylesheet" href="styles.css">
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <p>폐쇄 합니다 ㅂㅇ</p>
 </head>
-<body> 
-    <div class="container">
-        <h1>선생에게 한 표를</h1>
-        <div id="teacherList">
-            <h2>Select a Teacher</h2>
-            <ul id="teacherListItems">
-                <!-- Teacher list items will be dynamically populated here -->
-                <li id="compareAllButton">데이터 불러오기...</li> <!-- Hide initially -->
-            </ul>
-        </div>
-        <div id="teacherDetails" style="display:none;">
-            <h2 id="teacherName"></h2>
-            <p id="teacherVotes">현재 득표수: <span id="voteCount">0</span></p>
-            <button id="buyButton">매수</button>
-            <button id="sellButton">매도</button>
-            <button id="backButton">이전</button>
-            <!-- Canvas element for the chart -->
-            <canvas id="votesChart" width="400" height="200"></canvas>
-        </div>
-        <!-- Compare All View -->
-        <div id="compareAllDetails" style="display:none;">
-            <h2>비교분석</h2>
-            <button id="backButtonCompareAll">이전</button>
-            <canvas id="compareAllChart" width="400" height="200"></canvas>
-        </div>
-        <!-- Form to create a new teacher -->
-        <div id="createTeacher">
-            <h2>선생 추가</h2>
-            <input type="text" id="newTeacherName" placeholder="Enter teacher name">
-            <button id="createTeacherButton">추가해버리기</button>
-            <p id="errorMessage" style="color: red;"></p>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
-</body>
 </html>
